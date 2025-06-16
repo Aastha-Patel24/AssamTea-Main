@@ -42,7 +42,7 @@ footer{
 .foot-heading{
     height: 50px;
     width: 100%;
-    padding-top: 5%;
+    padding-top: 10%;
     /* border: 2px solid black; */
     display: flex;
     justify-content: space-evenly;
