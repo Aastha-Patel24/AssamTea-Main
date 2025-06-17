@@ -47,7 +47,7 @@ const ProductShop = () => {
   const handleEdit = (product) => {
     setFormData({ ...product });
     setEditId(product.id);
-    window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to form
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSubmit = (e) => {
@@ -98,6 +98,8 @@ const ProductShop = () => {
     </>
   );
 
+  const isDefaultImage = [blackTeaImage, greenTeaImage, herbalTeaImage].includes(formData.image);
+
   return (
     <div className='main-product'>
       <div className='heading'>
@@ -136,11 +138,18 @@ const ProductShop = () => {
           }}
           style={{ width: '100%', padding: '10px', marginBottom: '10px' }}
         />
-        {formData.image && ![blackTeaImage, greenTeaImage, herbalTeaImage].includes(formData.image) && (
+
+        {(formData.image && (editId !== null || !isDefaultImage)) && (
           <img
             src={formData.image}
             alt="Preview"
-            style={{ width: '100%', maxHeight: '300px', borderRadius: '10px', objectFit: 'contain', marginBottom: '10px' }}
+            style={{
+              width: '100%',
+              maxHeight: '300px',
+              borderRadius: '10px',
+              objectFit: 'contain',
+              marginBottom: '10px'
+            }}
           />
         )}
 
