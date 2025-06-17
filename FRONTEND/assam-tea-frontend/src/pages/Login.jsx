@@ -8,32 +8,42 @@ import { USER_API_END_POINT } from "../components/utils/constant";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-const [errorMsg, setErrorMsg] = useState("");
+  const [role, setRole] = useState("customer");
+  const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
-
-  const handleLogin =async (e) => {
-    e.preventDefault();
-try {
-   const res= await axios.post(`${USER_API_END_POINT}/login`,{
-      email,password
-    }) ;
+const handleLogin = async (e) => {
+  e.preventDefault();
+  try {
+    const res = await axios.post(`${USER_API_END_POINT}/login`, {
+      email,
+      password,
+      role,
+    });
 
     if (res.status === 200) {
-        alert(`Logging in with Email: ${email}`);
-    
-    setEmail("");
-    setPassword("");
+      const loggedInUser = res.data.user;
 
-     navigate("/");
+      localStorage.setItem("user", JSON.stringify(loggedInUser));
+      localStorage.setItem("isLoggedIn", "true");
 
+      setEmail("");
+      setPassword("");
 
-} }catch (error) {
-  console.log(error);
-}
-  };
-   
-   
-  
+      alert(`Logging in with Email: ${email}`);
+
+      // ✅ Ensure the navigate happens AFTER localStorage is saved
+      if (loggedInUser.role === "admin") {
+        navigate("/profile");
+      } else {
+        navigate("/");
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    setErrorMsg("Login failed. Please check your credentials.");
+  }
+};
+
 
   const handleGoogleLogin = () => {
     const width = 500;
@@ -47,15 +57,17 @@ try {
       `width=${width},height=${height},top=${top},left=${left}`
     );
 
-   
+
   };
 
   return (
     <div className="login-page-wrapper">
       {/* Blurred background image */}
-      <div 
-        className="login-bg-image" 
-        style={{ 
+
+      <div
+        className="login-bg-image"
+        style={{
+
           backgroundImage: `url(${bgImage})`,
           position: 'absolute',
           top: 0,
@@ -67,7 +79,9 @@ try {
           filter: 'blur(8px)',
           opacity: 0.7,
           zIndex: -1
-        }} 
+
+        }}
+
       />
 
       <div className="popup-card">
@@ -90,6 +104,14 @@ try {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+
+
+          <label>Role</label>
+          <select value={role} onChange={(e) => setRole(e.target.value)}>
+            <option value="customer">Customer</option>
+            <option value="admin">Admin</option>
+          </select>
+
 
           {/* Forgot Password link aligned left */}
           <div style={{ textAlign: 'left', marginBottom: '15px' }}>
