@@ -19,7 +19,7 @@ import AdminShopPage from './pages/AdminShopPage';
 import ResetPassword from './pages/ResetPassword';
 import ShoppingCart from './pages/ShoppingCart';
 import WholesalersAdmin from './pages/WholesalersAdmin';
-
+import UserNavbar from './components/UserNavbar';
 
 
   function App() {
@@ -40,7 +40,8 @@ import WholesalersAdmin from './pages/WholesalersAdmin';
 
     return (
       <Router>
-        <NavBar />
+       {isLoggedIn ? <UserNavbar /> : <NavBar />}
+
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
