@@ -54,7 +54,8 @@ const UserNavbar = () => (
             <li><Link className="dropdown-item" to="/profile">My Profile</Link></li>
             <li><button className="dropdown-item" onClick={() => {
               localStorage.removeItem("isLoggedIn");
-              window.location.reload();
+               localStorage.removeItem("user");
+              window.location.href = "/login";
             }}>Logout</button></li>
           </ul>
         </div>
