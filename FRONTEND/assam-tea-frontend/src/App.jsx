@@ -20,6 +20,8 @@ import ResetPassword from './pages/ResetPassword';
 import ShoppingCart from './pages/ShoppingCart';
 import WholesalersAdmin from './pages/WholesalersAdmin';
 import UserNavbar from './components/UserNavbar';
+import PaymentPage from './pages/PaymentPage'; // adjust if in pages folder
+
 
 
   function App() {
@@ -61,6 +63,8 @@ import UserNavbar from './components/UserNavbar';
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/admin/wholesalers" element={<WholesalersAdmin />} />
         <Route path="/shoppingcart" element={<ShoppingCart />} />
+        <Route path="/payment" element={<PaymentPage />} />
+
 
 
       </Routes>
