@@ -1,34 +1,33 @@
 
+
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './NavBar.css';
 import logo from '../assets/images/LOGO.png';
+import { FaUserCircle } from 'react-icons/fa';
 
 const Navbar = () => {
+  const [user, setUser] = useState(() => {
+    // Check localStorage on first render (sync)
+    const stored = localStorage.getItem("user");
+    return stored ? JSON.parse(stored) : null;
+  });
 
-
-  const [user, setUser] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    } else {
-      setUser(null);
-    }
-  }, [location]);
-
-
+    setUser(storedUser ? JSON.parse(storedUser) : null);
+  }, [location.pathname]);
 
   const handleLogout = () => {
-    localStorage.removeItem("user"); // ✅ Clear user info
+    localStorage.removeItem("user");
+    localStorage.removeItem("isLoggedIn");
     setUser(null);
     navigate("/login");
   };
-
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark justify-content-center">
@@ -57,19 +56,12 @@ const Navbar = () => {
             <li className="nav-item"><Link className="nav-link" to="/order">Order</Link></li>
             <li className="nav-item"><Link className="nav-link" to="/blog">Blog</Link></li>
             <li className="nav-item"><Link className="nav-link" to="/contact">Contact Us</Link></li>
-            {user?.role === "admin" && (
-              <li className="nav-item">
-                <Link className="nav-link" to="/profile">Admin</Link>
-              </li>
-            )}
           </ul>
 
-          {/* Order Now Button */}
           <Link to="/ordernow" className="btn btn-warning me-3">
             ORDER NOW
           </Link>
 
-          {/* Dropdown menu for Login and Signup */}
           <div className="dropdown">
             <button
               className="btn btn-warning dropdown-toggle d-flex align-items-center gap-2"
@@ -78,32 +70,26 @@ const Navbar = () => {
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              <i className="fas fa-user"></i> Account
+              <FaUserCircle size={20} /> {user ? "Profile" : "Account"}
             </button>
             <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuButton">
-              {/* <li><Link className="dropdown-item" to="/login">Login</Link></li>
-            <li><Link className="dropdown-item" to="/signup">Signup</Link></li> */}
-
-              {!user && (
+              {!user ? (
                 <>
                   <li><Link className="dropdown-item" to="/login">Login</Link></li>
                   <li><Link className="dropdown-item" to="/signup">Signup</Link></li>
                 </>
-              )}
-              {user && (
-                <li>
-                  <button onClick={handleLogout} className="dropdown-item">
-                    Logout
-                  </button>
-                </li>
+              ) : (
+                <>
+                  <li><Link className="dropdown-item" to="/profile">My Profile</Link></li>
+                  <li><button className="dropdown-item" onClick={handleLogout}>Logout</button></li>
+                </>
               )}
             </ul>
           </div>
         </div>
       </div>
     </nav>
-  )
-
+  );
 };
 
 export default Navbar;
