@@ -31,12 +31,8 @@ const handleLogin = async (e) => {
 
       alert(`Logging in with Email: ${email}`);
 
-      // ✅ Ensure the navigate happens AFTER localStorage is saved
-      if (loggedInUser.role === "admin") {
-        navigate("/profile");
-      } else {
         navigate("/");
-      }
+      
     }
   } catch (error) {
     console.log(error);
