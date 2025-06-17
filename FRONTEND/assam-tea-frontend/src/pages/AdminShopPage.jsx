@@ -1,4 +1,5 @@
 import React from 'react';
+import '../components/AdminProductShop.css'; // ✅ Correct relative path
 
 function AdminShopPage() {
   return (
