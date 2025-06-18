@@ -21,6 +21,8 @@ import ShoppingCart from './pages/ShoppingCart';
 import WholesalersAdmin from './pages/WholesalersAdmin';
 import UserNavbar from './components/UserNavbar';
 import PaymentPage from './pages/PaymentPage'; // adjust if in pages folder
+import ManageProduct from './components/ManageProduct';
+
 
 
 
@@ -58,12 +60,14 @@ import PaymentPage from './pages/PaymentPage'; // adjust if in pages folder
           <Route path="/order" element={<Order />} />
           <Route path="/adminsignup" element={<AdminSignup />} />
           <Route path="/admin/shop" element={<AdminShopPage />} />
-        <Route path="/product/:id" element={<ProductDetail />} />
-        <Route path="/profile" element={<AdminDashboard />} />
-        <Route path="/reset-password/:token" element={<ResetPassword />} />
-        <Route path="/admin/wholesalers" element={<WholesalersAdmin />} />
-        <Route path="/shoppingcart" element={<ShoppingCart />} />
-        <Route path="/payment" element={<PaymentPage />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/profile" element={<AdminDashboard />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
+          <Route path="/admin/wholesalers" element={<WholesalersAdmin />} />
+          <Route path="/shoppingcart" element={<ShoppingCart />} />
+          <Route path="/payment" element={<PaymentPage />} />
+          <Route path="/admin/manage-product" element={<ManageProduct />} />
+
 
 
 
