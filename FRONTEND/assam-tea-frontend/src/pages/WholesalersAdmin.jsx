@@ -2,6 +2,46 @@ import React, { useContext, useState } from 'react';
 import './WholesalersAdmin.css';
 import { OrderContext } from '../context/OrderContext';
 
+
+
+
+
+
+import { useNavigate } from "react-router-dom";
+
+const WholesalersAdmin = () => {
+  const navigate = useNavigate();
+
+  const handleOrderNow = () => {
+    navigate("/order", {
+      state: {
+        productType: "Bulk Assam Tea",
+        quantity: "10kg",
+      },
+    });
+  };
+
+  return (
+    <div className="wholesalers-admin">
+      <h1>Wholesale Assam Tea Orders</h1>
+      {/* Your existing content */}
+      
+      <button onClick={handleOrderNow} style={{ padding: "10px 20px", marginTop: "20px" }}>
+        Order Now
+      </button>
+    </div>
+  );
+};
+
+export default WholesalersAdmin;
+
+
+
+
+
+
+
+
 const WholesalersAdmin = () => {
   const { orders, updateStatus, deleteOrder } = useContext(OrderContext);
   const [expandedOrders, setExpandedOrders] = useState([]);
