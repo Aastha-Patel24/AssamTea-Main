@@ -1,16 +1,19 @@
-import React, { useContext, useState } from 'react';
-import './WholesalersAdmin.css';
-import { OrderContext } from '../context/OrderContext';
-
-
-
-
-
-
+import React, { useContext, useState } from "react";
+import { OrderContext } from "../contexts/OrderContext"; // make sure this exists
 import { useNavigate } from "react-router-dom";
 
 const WholesalersAdmin = () => {
+  const { orders, updateStatus, deleteOrder } = useContext(OrderContext);
+  const [expandedOrders, setExpandedOrders] = useState([]);
   const navigate = useNavigate();
+
+  const handleToggleExpand = (orderId) => {
+    setExpandedOrders((prevExpanded) =>
+      prevExpanded.includes(orderId)
+        ? prevExpanded.filter((id) => id !== orderId)
+        : [...prevExpanded, orderId]
+    );
+  };
 
   const handleOrderNow = () => {
     navigate("/order", {
@@ -23,71 +26,64 @@ const WholesalersAdmin = () => {
 
   return (
     <div className="wholesalers-admin">
-      <h1>Wholesale Assam Tea Orders</h1>
-      {/* Your existing content */}
-      
-      <button onClick={handleOrderNow} style={{ padding: "10px 20px", marginTop: "20px" }}>
+      <h1>Wholesale Orders</h1>
+
+      <button
+        onClick={handleOrderNow}
+        style={{
+          padding: "10px 20px",
+          marginBottom: "20px",
+          backgroundColor: "#2e7d32",
+          color: "white",
+          border: "none",
+          borderRadius: "6px",
+          cursor: "pointer",
+        }}
+      >
         Order Now
       </button>
-    </div>
-  );
-};
 
-export default WholesalersAdmin;
-
-
-
-
-
-
-
-
-const WholesalersAdmin = () => {
-  const { orders, updateStatus, deleteOrder } = useContext(OrderContext);
-  const [expandedOrders, setExpandedOrders] = useState([]);
-
-  const toggleExpand = (id) => {
-    setExpandedOrders((prev) =>
-      prev.includes(id) ? prev.filter((oid) => oid !== id) : [...prev, id]
-    );
-  };
-
-  return (
-    <div className="wholesalers-admin">
-      <h1>Bulk Order Requests</h1>
-      <div className="order-list">
-        {orders.map((order) => {
-          const isExpanded = expandedOrders.includes(order.id);
-
-          return (
-            <div className="order-card" key={order.id}>
-              <div className="order-header">
-                <p><strong>Full Name:</strong> {order.name}</p>
-                <div className="button-group">
-                  <button onClick={() => updateStatus(order.id, "Accepted")} className="accept-btn">Accept</button>
-                  <button onClick={() => deleteOrder(order.id)} className="reject-btn">Reject</button>
-                  <button onClick={() => toggleExpand(order.id)} className="readmore-btn">
-                    {isExpanded ? "Show Less" : "Read More"}
-                  </button>
-                </div>
+      {orders.length === 0 ? (
+        <p>No wholesale orders yet.</p>
+      ) : (
+        <div>
+          {orders.map((order) => (
+            <div
+              key={order._id}
+              style={{
+                border: "1px solid #ccc",
+                padding: "15px",
+                marginBottom: "10px",
+                borderRadius: "8px",
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <strong>{order.customerName}</strong>
+                <button onClick={() => handleToggleExpand(order._id)}>
+                  {expandedOrders.includes(order._id) ? "Collapse" : "Expand"}
+                </button>
               </div>
 
-              {isExpanded && (
-                <div className="order-details">
-                  <p><strong>Business Name:</strong> {order.business}</p>
-                  <p><strong>Email:</strong> {order.email}</p>
-                  <p><strong>Phone:</strong> {order.phone}</p>
-                  <p><strong>Product:</strong> {order.product}</p>
-                  <p><strong>Quantity:</strong> {order.quantity}</p>
-                  <p><strong>Location:</strong> {order.location}</p>
-                  <p><strong>Message:</strong> {order.message}</p>
-                  <p><strong>Status:</strong> <span className={`status ${order.status.toLowerCase()}`}>{order.status}</span></p>
+              {expandedOrders.includes(order._id) && (
+                <div style={{ marginTop: "10px" }}>
+                  <p>Email: {order.email}</p>
+                  <p>Product: {order.productType}</p>
+                  <p>Quantity: {order.quantity}</p>
+                  <p>Status: {order.status}</p>
+
+                  <button
+                    onClick={() => updateStatus(order._id, "Completed")}
+                    style={{ marginRight: "10px" }}
+                  >
+                    Mark as Completed
+                  </button>
+                  <button onClick={() => deleteOrder(order._id)}>Delete</button>
                 </div>
               )}
             </div>
-          );
-        })}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
