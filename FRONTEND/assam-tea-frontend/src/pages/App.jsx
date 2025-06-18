@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
-import UserNavbar from './components/UserNavbar';
-import NavBar from './components/NavBar';
-import Footer from './components/Footer';
-
 import Home from './pages/Home';
 import About from './pages/About';
 import Shop from './pages/Shop';
@@ -65,11 +60,7 @@ function App() {
         <Route path="/adminsignup" element={<AdminSignup />} />
         <Route path="/profile" element={<AdminDashboard />} />
         <Route path="/admin/shop" element={<AdminShopPage />} />
-        <Route path="/admin/wholesalers" element={<WholesalersAdmin />} />
-        
-        <Route path="/order" element={<Order />} />
-        <Route path="/wholesales" element={<WholesalersAdmin />} />
-        
+        <Route path="/admin/wholesalers" element={<WholesalersAdmin />} />  
       </Routes>
       <Footer />
     </Router>
