@@ -15,7 +15,7 @@ const AdminDashboard = () => {
       title: 'Manage Products',
       icon: <FaBoxOpen size={40} />,
       description: 'Add, update, or delete tea products.',
-      route: '/admin/products'
+      route: '/admin/manage-product'
     },
     {
       title: 'Connect with Retailers',
