@@ -1,52 +1,111 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../components/ShoppingCart.css';
 import ProductRow from '../components/ProductRow';
 import OrderSummary from '../components/OrderSummary';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
+
 
 import blackTeaImage from '../assets/images/black-tea-cart.png';
 import masalaTeaImage from '../assets/images/masala-tea-cart.png';
 import greenTeaImage from '../assets/images/green-tea-cart.png';
 
 const ShoppingCart = () => {
-  const [products, setProducts] = useState([
-    {
-      id: 1,
-      name: 'Black Tea',
-      weight: '1 kg pack',
-      price: 300,
-      image: blackTeaImage,
-      description: 'Premium Assam Black Tea - 1kg Pack, Full-Bodied, Strong & Robust Flavor, Rich Malty Undertones.',
-      benefits: 'Boosts energy and improves focus',
-      stock: 'In stock',
-      quantity: 1,
-    },
-    {
-      id: 2,
-      name: 'Masala Tea',
-      weight: '1 kg pack',
-      price: 500,
-      image: masalaTeaImage,
-      description: 'Premium Masala Tea - 1kg Pack, Richly Spiced, Aromatic Blend with Bold & Full-Bodied Flavor, Infused with Traditional Spices.',
-      benefits: 'Warming and immune-boosting',
-      stock: 'Only 3 left',
-      quantity: 1,
-    },
-    {
-      id: 3,
-      name: 'Green Tea',
-      weight: '500g pack',
-      price: 450,
-      image: greenTeaImage,
-      description: 'Premium Green Tea - 500g Pack, Refreshing & Light, Naturally Rich Flavor with a Smooth, Grassy Aroma, Packed with Antioxidants.',
-      benefits: 'Promotes metabolism and offers antioxidant benefits',
-      stock: 'In stock',
-      quantity: 1,
-    }
-  ]);
+  const navigate = useNavigate();
+  // const [products, setProducts] = useState([
+  //   {
+  //     id: 1,
+  //     name: 'Black Tea',
+  //     weight: '1 kg pack',
+  //     price: 300,
+  //     image: blackTeaImage,
+  //     description: 'Premium Assam Black Tea - 1kg Pack, Full-Bodied, Strong & Robust Flavor, Rich Malty Undertones.',
+  //     benefits: 'Boosts energy and improves focus',
+  //     stock: 'In stock',
+  //     quantity: 1,
+  //   },
+  //   {
+  //     id: 2,
+  //     name: 'Masala Tea',
+  //     weight: '1 kg pack',
+  //     price: 500,
+  //     image: masalaTeaImage,
+  //     description: 'Premium Masala Tea - 1kg Pack, Richly Spiced, Aromatic Blend with Bold & Full-Bodied Flavor, Infused with Traditional Spices.',
+  //     benefits: 'Warming and immune-boosting',
+  //     stock: 'Only 3 left',
+  //     quantity: 1,
+  //   },
+  //   {
+  //     id: 3,
+  //     name: 'Green Tea',
+  //     weight: '500g pack',
+  //     price: 450,
+  //     image: greenTeaImage,
+  //     description: 'Premium Green Tea - 500g Pack, Refreshing & Light, Naturally Rich Flavor with a Smooth, Grassy Aroma, Packed with Antioxidants.',
+  //     benefits: 'Promotes metabolism and offers antioxidant benefits',
+  //     stock: 'In stock',
+  //     quantity: 1,
+  //   }
+  // ]);
 
-  const handleDelete = (id) => {
-    setProducts(prev => prev.filter(p => p.id !== id));
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+  const fetchCart = async () => {
+    try {
+      const res = await axios.get('http://localhost:5000/api/cart/getcart', {
+       withCredentials: true,
+      });
+
+        console.log("Cart response data:", res.data);  // ✅ Will now show correct data
+
+    const items = res.data.items || []; 
+
+      const fetchedProducts = res.data.items.map(item => ({
+        id: item.product._id,
+        name: item.product.name,
+        image: item.product.image, // adjust if image is nested
+        // weight: item.product.weight,
+        weight: item.size,
+        price: item.product.price,
+        quantity: item.quantity,
+        description: item.product.description || '',
+        benefits: item.product.benefits || '',
+        stock: item.product.stockStatus || 'In stock',
+      }));
+
+      setProducts(fetchedProducts);
+    } catch (err) {
+      console.error('Failed to fetch cart:', err);
+    }
   };
+
+  fetchCart();
+}, []);
+
+
+const handleDelete = async (id, size) => {
+  try {
+    await axios.delete('http://localhost:5000/api/cart/remove', {
+      withCredentials: true,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: {
+        productId: id,
+        size: size,
+      },
+    });
+
+    setProducts(prev => prev.filter(p => !(p.id === id && p.weight === size)));
+
+  } catch (err) {
+    console.error("Error deleting item from cart:", err);
+  }
+};
+
+
 
   const handleQuantityChange = (id, newQuantity) => {
     setProducts(prev =>
@@ -55,6 +114,15 @@ const ShoppingCart = () => {
       )
     );
   };
+
+  const handleProceedToBuy = () => {
+  const totalAmount = products.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
+  navigate('/payment', { state: { totalAmount } });
+};
+
 
   return (
     <div className="shopping-cart-container">
@@ -76,7 +144,45 @@ const ShoppingCart = () => {
           ))}
           <a href="/" className="continue-shopping">← CONTINUE SHOPPING</a>
         </div>
-        <OrderSummary products={products} />
+        {/* <OrderSummary products={products} />
+         */}
+        <OrderSummary 
+  products={products} 
+  // onProceed={() => {
+  //   const subtotal = products.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  //   navigate('/payment', { state: { baseAmount: subtotal } });
+  // }} 
+  onProceed={async () => {
+  try {
+    const orderItems = products.map(item => ({
+      product: item.id,
+      size: item.weight,  // or use item.size if available separately
+      quantity: item.quantity,
+    }));
+
+    const res = await axios.post('http://localhost:5000/api/order/place', {
+      items: orderItems
+    }, {
+      withCredentials: true
+    });
+
+    console.log('Order placed:', res.data);
+
+    // ✅ Clear cart locally after placing order
+    setProducts([]); // Optional: Clear the cart UI immediately
+
+    // ✅ Navigate to payment confirmation
+    navigate('/payment', { state: { baseAmount: res.data.order.totalPrice } });
+
+  } catch (error) {
+    console.error('Error placing order:', error);
+    alert('Failed to place order.');
+  }
+}}
+
+/>
+
+
       </div>
     </div>
   );
