@@ -1,5 +1,4 @@
 
-
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -9,7 +8,6 @@ import { FaUserCircle } from 'react-icons/fa';
 
 const Navbar = () => {
   const [user, setUser] = useState(() => {
-    // Check localStorage on first render (sync)
     const stored = localStorage.getItem("user");
     return stored ? JSON.parse(stored) : null;
   });
@@ -56,6 +54,15 @@ const Navbar = () => {
             <li className="nav-item"><Link className="nav-link" to="/order">Order</Link></li>
             <li className="nav-item"><Link className="nav-link" to="/blog">Blog</Link></li>
             <li className="nav-item"><Link className="nav-link" to="/contact">Contact Us</Link></li>
+
+            {/* ✅ Admin-only Link */}
+            {user?.role === "admin" && (
+              <li className="nav-item">
+                <Link className="nav-link text-warning fw-bold" to="/admin/manage-products">
+                  Manage Products
+                </Link>
+              </li>
+            )}
           </ul>
 
           <Link to="/ordernow" className="btn btn-warning me-3">
@@ -93,3 +100,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
