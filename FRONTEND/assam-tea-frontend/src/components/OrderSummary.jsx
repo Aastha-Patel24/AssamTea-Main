@@ -2,7 +2,7 @@ import React from 'react';
 import './OrderSummary.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const OrderSummary = ({ products }) => {
+const OrderSummary = ({ products, onProceed }) => {
   const subtotal = products.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
@@ -26,7 +26,12 @@ const OrderSummary = ({ products }) => {
           <span className="summary-price">₹{subtotal.toLocaleString('en-IN')}</span>
         </div>
 
-        <button className="btn btn-warning text-dark proceed-button">Proceed to Buy</button>
+        <button className="btn btn-warning text-dark proceed-button" onClick={() => {
+    console.log('Button clicked');
+    onProceed();
+  }}>
+          Proceed to Buy
+        </button>
       </div>
     </div>
   );
