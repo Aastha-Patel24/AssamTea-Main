@@ -21,7 +21,7 @@ const productSchema = new mongoose.Schema({
     category: {
         type: String,
         enum: ['Black Tea', 'Green Tea', 'Herbal Tea'],
-        required: true,
+       
     },
 
     stock: {
