@@ -22,12 +22,14 @@ import WholesalersAdmin from './pages/WholesalersAdmin';
 import UserNavbar from './components/UserNavbar';
 import PaymentPage from './pages/PaymentPage'; // adjust if in pages folder
 import ManageProduct from './components/ManageProduct';
+import ManageProduct from './pages/ManageProduct';
 import CartPage from './pages/CartPage';
 import Profile from './pages/Profile';
 import UserProfile from './pages/UserProfile';
 import UserOrders from './pages/UserOrders';
 import UserUpdateProfile from './pages/UserUpdateProfile';
 
+import ProductPage from './pages/Product';
 
 
   function App() {
@@ -77,6 +79,9 @@ import UserUpdateProfile from './pages/UserUpdateProfile';
           <Route path="/UserProfile" element={<UserProfile />} />
           <Route path="/user/UserOrders" element={<UserOrders />} />
           <Route path="/user/UserUpdateProfile" element={<UserUpdateProfile />} />
+
+          <Route path="/products" element={<ProductPage />} />
+          <Route path="/admin/manage-products" element={<ManageProduct />} />
       </Routes>
       <Footer />
     </Router>
