@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import './ManageProduct.css';
+import { Link } from 'react-router-dom';
+
+
 
 const ManageProduct = () => {
   const [products, setProducts] = useState([]);
@@ -61,6 +64,10 @@ const ManageProduct = () => {
   };
 
   return (
+    <Link to="/products">
+      <button className="back-to-products">🛒 Go to Product Page</button>
+    </Link>
+
     <div className="manage-product">
       <h2>Manage Products</h2>
       <form onSubmit={handleSubmit}>
