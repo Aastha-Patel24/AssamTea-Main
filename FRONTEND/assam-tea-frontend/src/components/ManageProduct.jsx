@@ -1,21 +1,37 @@
+
 import React, { useEffect, useState } from 'react';
 import './ManageProduct.css';
-import { Link } from 'react-router-dom';
-
-
+import axios from 'axios';
 
 const ManageProduct = () => {
   const [products, setProducts] = useState([]);
-  const [form, setForm] = useState({ id: '', name: '', price: '', description: '', image: '' });
+
+  const [form, setForm] = useState({
+    id: '',
+    name: '',
+    price: '',
+    description: '',
+    image: '',
+    stock: 0,
+    productLife: '',
+    instructions: '',
+    temperature: '',
+    availableSizes: [],
+  });
+
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem('products')) || [];
-    setProducts(stored);
+    fetchProducts();
   }, []);
 
-  const saveToLocalStorage = (data) => {
-    localStorage.setItem('products', JSON.stringify(data));
+  const fetchProducts = async () => {
+    try {
+      const res = await axios.get('http://localhost:5000/api/product');
+      setProducts(res.data.products);
+    } catch (err) {
+      console.error('Error fetching products:', err);
+    }
   };
 
   const handleImageUpload = (e) => {
@@ -24,81 +40,147 @@ const ManageProduct = () => {
 
     const reader = new FileReader();
     reader.onloadend = () => {
-      setForm({ ...form, image: reader.result }); // Base64 image
+      setForm({ ...form, image: reader.result });
     };
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.image) {
-      alert("Please select an image.");
+    if (!form.name || !form.price || !form.description || !form.image) {
+      alert("All fields are required");
       return;
     }
 
-    if (isEditing) {
-      const updated = products.map((p) => (p.id === form.id ? form : p));
-      setProducts(updated);
-      saveToLocalStorage(updated);
-      setIsEditing(false);
-    } else {
-      const newProduct = { ...form, id: Date.now() };
-      const updated = [...products, newProduct];
-      setProducts(updated);
-      saveToLocalStorage(updated);
+    if (form.availableSizes.length === 0) {
+      alert("Add at least one size");
+      return;
     }
 
-    setForm({ id: '', name: '', price: '', description: '', image: '' });
+    try {
+      const payload = {
+        ...form,
+        price: Number(form.price),
+        stock: Number(form.stock),
+        ratingStars: 0,
+        noOfRatings: 0,
+        productLife: form.productLife || "12 months",
+        instructions: form.instructions || "Store in a cool place",
+        temperature: form.temperature || "Room Temperature",
+      };
+
+      const res = await axios.post('http://localhost:5000/api/product/create', payload, {
+        withCredentials: true,
+      });
+
+      alert('Product added successfully');
+      setProducts([...products, res.data.product]);
+
+      // Reset form
+      setForm({
+        id: '',
+        name: '',
+        price: '',
+        description: '',
+        image: '',
+        stock: 0,
+        productLife: '',
+        instructions: '',
+        temperature: '',
+        availableSizes: [],
+      });
+
+    } catch (err) {
+      console.error('Error submitting product:', err);
+      alert(err.response?.data?.message || 'Failed to add product');
+    }
   };
 
-  const handleDelete = (id) => {
-    const updated = products.filter((p) => p.id !== id);
-    setProducts(updated);
-    saveToLocalStorage(updated);
-  };
-
-  const handleEdit = (product) => {
-    setForm(product);
-    setIsEditing(true);
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/product/${id}`, {
+        withCredentials: true
+      });
+      fetchProducts();
+    } catch (err) {
+      console.error('Error deleting product:', err);
+    }
   };
 
   return (
-    <Link to="/products">
-      <button className="back-to-products">🛒 Go to Product Page</button>
-    </Link>
-
     <div className="manage-product">
       <h2>Manage Products</h2>
+
       <form onSubmit={handleSubmit}>
         <input placeholder="Product Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
-        <input placeholder="Price (e.g., ₹ 200 Per Kg)" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} required />
-        <input placeholder="Description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} required />
-        
-        <input type="file" accept="image/*" onChange={handleImageUpload} required={!isEditing} />
-        {form.image && (
-          <div style={{ marginTop: '10px' }}>
-            <img src={form.image} alt="Preview" width="100" />
-          </div>
-        )}
+        <input placeholder="Price (₹)" type="number" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} required />
+        <textarea placeholder="Description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} required />
 
+        <h4>Available Sizes</h4>
+        {form.availableSizes.map((size, index) => (
+          <div key={index} className="size-row">
+            <input
+              placeholder="Size label (e.g., 250g)"
+              value={size.label}
+              onChange={(e) => {
+                const updated = [...form.availableSizes];
+                updated[index].label = e.target.value;
+                setForm({ ...form, availableSizes: updated });
+              }}
+              required
+            />
+            <input
+              type="number"
+              placeholder="Price"
+              value={size.price}
+              onChange={(e) => {
+                const updated = [...form.availableSizes];
+                updated[index].price = Number(e.target.value);
+                setForm({ ...form, availableSizes: updated });
+              }}
+              required
+            />
+            <button type="button" onClick={() => {
+              const updated = form.availableSizes.filter((_, i) => i !== index);
+              setForm({ ...form, availableSizes: updated });
+            }}>Remove</button>
+          </div>
+        ))}
+        <button type="button" onClick={() =>
+          setForm({ ...form, availableSizes: [...form.availableSizes, { label: '', price: 0 }] })
+        }>Add Size</button>
+
+        <input placeholder="Stock" type="number" value={form.stock} onChange={(e) => setForm({ ...form, stock: e.target.value })} required />
+        <input placeholder="Product Life (optional)" value={form.productLife} onChange={(e) => setForm({ ...form, productLife: e.target.value })} />
+        <input placeholder="Instructions (optional)" value={form.instructions} onChange={(e) => setForm({ ...form, instructions: e.target.value })} />
+        <input placeholder="Temperature (optional)" value={form.temperature} onChange={(e) => setForm({ ...form, temperature: e.target.value })} />
+
+        <input type="file" accept="image/*" onChange={handleImageUpload} required />
+        {form.image && <img src={form.image} alt="preview" width="100" style={{ marginTop: '10px' }} />}
         <button type="submit">{isEditing ? 'Update' : 'Add'} Product</button>
       </form>
 
       <div className="product-list">
         <h3>Current Products</h3>
         {products.map((product) => (
-          <div key={product.id} className="product-item">
+          <div key={product._id} className="product-item">
             <img src={product.image} alt={product.name} width="80" />
             <div>
               <h4>{product.name}</h4>
               <p>{product.description}</p>
-              <strong>{product.price}</strong>
+              <strong>₹{product.price}</strong>
+              {product.availableSizes?.length > 0 && (
+                <ul>
+                  {product.availableSizes.map((size, i) => (
+                    <li key={i}>{size.label} - ₹{size.price}</li>
+                  ))}
+                </ul>
+              )}
             </div>
-             <div className="product-actions">
-               <button onClick={() => handleEdit(product)}>Edit</button>
-               <button onClick={() => handleDelete(product.id)}>Delete</button>
-             </div>
+            <div className="product-actions">
+              <button onClick={() => handleDelete(product._id)}>Delete</button>
+            </div>
           </div>
         ))}
       </div>
