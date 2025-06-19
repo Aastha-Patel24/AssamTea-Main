@@ -22,7 +22,7 @@ import WholesalersAdmin from './pages/WholesalersAdmin';
 import UserNavbar from './components/UserNavbar';
 import PaymentPage from './pages/PaymentPage'; // adjust if in pages folder
 import ManageProduct from './components/ManageProduct';
-
+import CartPage from './pages/CartPage';
 
 
 
@@ -67,6 +67,7 @@ import ManageProduct from './components/ManageProduct';
           <Route path="/shoppingcart" element={<ShoppingCart />} />
           <Route path="/payment" element={<PaymentPage />} />
           <Route path="/admin/manage-product" element={<ManageProduct />} />
+          <Route path="/cart" element={<CartPage />} />
 
 
 
