@@ -23,6 +23,10 @@ import UserNavbar from './components/UserNavbar';
 import PaymentPage from './pages/PaymentPage'; // adjust if in pages folder
 import ManageProduct from './components/ManageProduct';
 import CartPage from './pages/CartPage';
+import Profile from './pages/Profile';
+import UserProfile from './pages/UserProfile';
+import UserOrders from './pages/UserOrders';
+import UserUpdateProfile from './pages/UserUpdateProfile';
 
 
 
@@ -68,10 +72,11 @@ import CartPage from './pages/CartPage';
           <Route path="/payment" element={<PaymentPage />} />
           <Route path="/admin/manage-product" element={<ManageProduct />} />
           <Route path="/cart" element={<CartPage />} />
-
-
-
-
+          <Route path="/profile" element={<AdminDashboard />} />
+          <Route path="/admin/profile" element={<Profile />} />
+          <Route path="/UserProfile" element={<UserProfile />} />
+          <Route path="/user/UserOrders" element={<UserOrders />} />
+          <Route path="/user/UserUpdateProfile" element={<UserUpdateProfile />} />
       </Routes>
       <Footer />
     </Router>
