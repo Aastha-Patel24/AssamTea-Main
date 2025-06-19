@@ -48,7 +48,9 @@ const ProductRow = ({ product, onDelete, onQuantityChange }) => {
         <p className="benefits">{product.benefits}</p>
         <p className="stock">{product.stock}</p>
         <div className="action-links">
-          <span className="delete-link" onClick={() => onDelete(product.id)}>Delete</span>
+          {/* <span className="delete-link" onClick={() => onDelete(product.id)}>Delete</span> */}
+          <span className="delete-link" onClick={() => onDelete(product.id, product.weight)}>Delete</span>
+
           <span className="share-link" onClick={handleShare}>Share</span>
         </div>
       </div>
@@ -57,7 +59,9 @@ const ProductRow = ({ product, onDelete, onQuantityChange }) => {
         <div className="qty-pill">
           {quantity === 1 ? (
             <>
-              <FaTrashAlt className="icon" onClick={() => onDelete(product.id)} />
+              {/* <FaTrashAlt className="icon" onClick={() => onDelete(product.id)} /> */}
+              <FaTrashAlt className="icon" onClick={() => onDelete(product.id, product.weight)} />
+
               <span>{quantity}</span>
               <button onClick={handleIncrement}>+</button>
             </>
