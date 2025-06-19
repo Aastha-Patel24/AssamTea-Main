@@ -18,7 +18,9 @@ const handleLogin = async (e) => {
       email,
       password,
       role,
-    });
+    },{
+  withCredentials: true   
+});
 
     if (res.status === 200) {
       const loggedInUser = res.data.user;
