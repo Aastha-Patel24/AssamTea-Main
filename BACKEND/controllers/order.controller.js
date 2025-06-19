@@ -40,43 +40,72 @@ export const placeOrder = async (req, res) => {
             totalPrice = orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
         }
 
-        else {
-            //  Checkout from Cart
+//         else {
+//             //  Checkout from Cart
 
-            const cart = await Cart.findOne({ user: userId }).populate('items.product');
-            if (!cart || cart.items.length === 0) {
-                return res.status(400).json({ message: 'Cart is empty' });
-            }
+//             const cart = await Cart.findOne({ user: userId }).populate('items.product');
+//             if (!cart || cart.items.length === 0) {
+//                 return res.status(400).json({ message: 'Cart is empty' });
+//             }
 
-            orderItems = cart.items.map(item => {
+//             orderItems = cart.items.map(item => {
 
-                console.log("Product Sizes:", item.product.availableSizes);
-                console.log("User Selected Size:", item.size);
+//                 // console.log("Product Sizes:", item.product.availableSizes);
+//                 // console.log("User Selected Size:", item.size);
 
 
-                const matchedSize = item.product.availableSizes.find(s => s.label === item.size);
+//                 // const matchedSize = item.product.availableSizes.find(s => s.label === item.size);
 
-                const price = matchedSize ? matchedSize.price : item.product.price;
+//                 const price = matchedSize ? matchedSize.price : item.product.price;
 
-                return {
-                    product: item.product._id,
-                    size: item.size,
-                    quantity: item.quantity,
-                    price
-                }
-            });
+//                 return {
+//                     product: item.product._id,
+//                     size: item.size,
+//                     quantity: item.quantity,
+//                     price
+//                 }
+//             });
 
-            totalPrice = orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+//             totalPrice = orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
-            cart.items = cart.items.filter(cartItem => {
-                return !orderItems.some(ordered =>
-                    cartItem.product.toString() === ordered.product.toString() &&
-                    cartItem.size === ordered.size
-                )
-            });
+//             // cart.items = cart.items.filter(cartItem => {
+//             //     return !orderItems.some(ordered =>
+//             //         cartItem.product.toString() === ordered.product.toString() &&
+//             //         cartItem.size === ordered.size
+//             //     )
+//             // });
 
-            await cart.save();
-        }
+//             cart.items = [];
+// await cart.save();
+
+//         }
+
+else {
+    //  Checkout from Cart
+    const cart = await Cart.findOne({ user: userId }).populate('items.product');
+    if (!cart || cart.items.length === 0) {
+        return res.status(400).json({ message: 'Cart is empty' });
+    }
+
+    orderItems = cart.items.map(item => {
+        const matchedSize = item.product.availableSizes?.find(s => s.label === item.size);
+        const price = matchedSize ? matchedSize.price : item.product.price;
+
+        return {
+            product: item.product._id,
+            size: item.size,
+            quantity: item.quantity,
+            price
+        };
+    });
+
+    totalPrice = orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
+    // Empty the cart after placing the order
+    cart.items = [];
+    await cart.save();
+}
+
 
         const order = await Order.create({
             user: userId,
