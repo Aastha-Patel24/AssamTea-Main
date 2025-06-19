@@ -13,6 +13,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import ShoppingCart from './pages/ShoppingCart';
 import AdminSignup from './pages/AdminSignup';
 import AdminDashboard from './pages/AdminDashBoard';
+import Profile from './pages/Profile';
 import AdminShopPage from './pages/AdminShopPage';
 import WholesalersAdmin from './pages/WholesalersAdmin';
 
@@ -59,6 +60,7 @@ function App() {
         <Route path="/shoppingcart" element={<ShoppingCart />} />
         <Route path="/adminsignup" element={<AdminSignup />} />
         <Route path="/profile" element={<AdminDashboard />} />
+        <Route path="/admin/profile" element={<Profile />} />
         <Route path="/admin/shop" element={<AdminShopPage />} />
         <Route path="/admin/wholesalers" element={<WholesalersAdmin />} />  
       </Routes>
