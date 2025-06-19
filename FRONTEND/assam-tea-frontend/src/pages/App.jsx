@@ -25,6 +25,8 @@ import Order from "./pages/Order";
 import WholesalersAdmin from "./pages/WholesalersAdmin";
 
 
+import ManageProduct from './pages/ManageProduct';
+import ProductPage from './pages/Product'; // OR './pages/ShoppingCart' or 'ProductDisplay' if it's named differently
 
 
 
@@ -63,6 +65,9 @@ function App() {
         <Route path="/admin/profile" element={<Profile />} />
         <Route path="/admin/shop" element={<AdminShopPage />} />
         <Route path="/admin/wholesalers" element={<WholesalersAdmin />} />  
+        <Route path="/products" element={<ProductPage />} />
+        <Route path="/admin/manage-products" element={<ManageProduct />} />
+
       </Routes>
       <Footer />
     </Router>
