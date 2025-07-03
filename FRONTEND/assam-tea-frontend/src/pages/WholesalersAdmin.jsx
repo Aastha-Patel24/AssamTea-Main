@@ -24,8 +24,12 @@ const WholesalersAdmin = () => {
               <div className="order-header">
                 <p><strong>Full Name:</strong> {order.name}</p>
                 <div className="button-group">
-                  <button onClick={() => updateStatus(order.id, "Accepted")} className="accept-btn">Accept</button>
-                  <button onClick={() => deleteOrder(order.id)} className="reject-btn">Reject</button>
+                  <button onClick={() => updateStatus(order.id, "Accepted")} className="accept-btn">
+                    Accept
+                  </button>
+                  <button onClick={() => deleteOrder(order.id)} className="reject-btn">
+                    Reject
+                  </button>
                   <button onClick={() => toggleExpand(order.id)} className="readmore-btn">
                     {isExpanded ? "Show Less" : "Read More"}
                   </button>
@@ -34,4 +38,26 @@ const WholesalersAdmin = () => {
 
               {isExpanded && (
                 <div className="order-details">
-                  <p><strong>Business Name:</strong> {order.businessName}</p>
+                  <p><strong>Business Name:</strong> {order.business}</p>
+                  <p><strong>Email:</strong> {order.email}</p>
+                  <p><strong>Phone:</strong> {order.phone}</p>
+                  <p><strong>Product:</strong> {order.product}</p>
+                  <p><strong>Quantity:</strong> {order.quantity}</p>
+                  <p><strong>Location:</strong> {order.location}</p>
+                  <p><strong>Message:</strong> {order.message}</p>
+                  <p><strong>Status:</strong> 
+                    <span className={`status ${order.status.toLowerCase()}`}>
+                      {order.status}
+                    </span>
+                  </p>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+export default WholesalersAdmin;
